@@ -1,10 +1,13 @@
 package com.example.todo.repository;
 
-import com.example.todo.model.Post;
+import com.example.todo.domain.Post;
+import com.example.todo.dto.post.PostCreateRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class PostRepository {
 
     private final JdbcTemplate jdbcTemplate;

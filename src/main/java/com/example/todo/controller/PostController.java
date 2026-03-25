@@ -1,6 +1,8 @@
 package com.example.todo.controller;
 
-import com.example.todo.model.Post;
+import com.example.todo.domain.Post;
+import com.example.todo.dto.post.PostCreateRequest;
+import com.example.todo.dto.post.PostResponse;
 import com.example.todo.service.PostService;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,17 +19,17 @@ public class PostController {
     }
 
     @PostMapping
-    public void createPost(@RequestBody Post post) {
-        service.createPost(post);
+    public void createPost(@RequestBody PostCreateRequest request) {
+        service.createPost(request);
     }
 
     @GetMapping
-    public List<Post> getPosts() {
+    public List<PostResponse> getPosts() {
         return service.getAllPosts();
     }
 
     @GetMapping("/{id}")
-    public Post getPost(@PathVariable Long id) {
+    public PostResponse getPost(@PathVariable Long id) {
         return service.getPost(id);
     }
 
