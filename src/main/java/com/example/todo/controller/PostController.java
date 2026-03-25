@@ -1,48 +1,44 @@
 package com.example.todo.controller;
 
-import org.springframework.jdbc.core.JdbcTemplate;
+import com.example.todo.model.Post;
+import com.example.todo.service.PostService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
+@RequestMapping("/posts")
 public class PostController {
 
-    private final JdbcTemplate jdbcTemplate;
+    private final PostService service;
 
-    public PostController(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public PostController(PostService service) {
+        this.service = service;
     }
 
-    @PostMapping("/posts")
-    public void createPost(@RequestBody Map<String, String> body) {
-        String sql = "INSERT INTO posts (title, content) VALUES (?,?)";
-        jdbcTemplate.update(sql, body.get("title"), body.get("content"));
+    @PostMapping
+    public void createPost(@RequestBody Post post) {
+        service.createPost(post);
     }
 
-    @GetMapping("/posts")
-    public List<Map<String, Object>> getPosts() {
-        String sql = "SELECT * FROM posts";
-        return jdbcTemplate.queryForList(sql);
+    @GetMapping
+    public List<Post> getPosts() {
+        return service.getAllPosts();
     }
 
-    @GetMapping("/posts/{id}")
-    public Map<String, Object> getPost(@PathVariable Long id) {
-        String sql = "SELECT * FROM posts WHERE id = ?";
-        return jdbcTemplate.queryForMap(sql, id);
+    @GetMapping("/{id}")
+    public Post getPost(@PathVariable Long id) {
+        return service.getPost(id);
     }
 
-    @PutMapping("/posts/{id}")
-    public void updatePost(@PathVariable Long id, @RequestBody Map<String, String> body) {
-        String sql = "UPDATE posts SET title = ?, content = ? WHERE id = ?";
-        jdbcTemplate.update(sql, body.get("title"), body.get("content"), id);
+    @PutMapping("/{id}")
+    public void updatePost(@PathVariable Long id, @RequestBody Post post) {
+        post.setId(id);
+        service.updatePost(post);
     }
 
-    @DeleteMapping("/posts/{id}")
+    @DeleteMapping("/{id}")
     public void deletePost(@PathVariable Long id) {
-        String sql = "DELETE FROM posts WHERE id = ?";
-        jdbcTemplate.update(sql, id);
+        service.deletePost(id);
     }
 }
-
