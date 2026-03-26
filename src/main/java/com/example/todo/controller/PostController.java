@@ -3,6 +3,7 @@ package com.example.todo.controller;
 import com.example.todo.domain.Post;
 import com.example.todo.dto.post.PostCreateRequest;
 import com.example.todo.dto.post.PostResponse;
+import com.example.todo.dto.post.PostUpdateRequest;
 import com.example.todo.service.PostService;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,9 +35,8 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    public void updatePost(@PathVariable Long id, @RequestBody Post post) {
-        post.setId(id);
-        service.updatePost(post);
+    public void updatePost(@PathVariable Long id, @RequestBody PostUpdateRequest request) {
+        service.updatePost(id, request);
     }
 
     @DeleteMapping("/{id}")
