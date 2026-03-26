@@ -1,6 +1,6 @@
 package com.example.todo.controller;
 
-import com.example.todo.domain.Post;
+import com.example.todo.common.ApiResponse;
 import com.example.todo.dto.post.PostCreateRequest;
 import com.example.todo.dto.post.PostResponse;
 import com.example.todo.dto.post.PostUpdateRequest;
@@ -25,13 +25,21 @@ public class PostController {
     }
 
     @GetMapping
-    public List<PostResponse> getPosts() {
-        return service.getAllPosts();
+    public ApiResponse<List<PostResponse>> getPosts() {
+        return new ApiResponse<>(
+                "SUCCESS",
+                "조회성공",
+                service.getAllPosts()
+        );
     }
 
     @GetMapping("/{id}")
-    public PostResponse getPost(@PathVariable Long id) {
-        return service.getPost(id);
+    public ApiResponse<PostResponse> getPost(@PathVariable Long id) {
+        return new ApiResponse<>(
+                "SUCCESS",
+                "조회 성공",
+                service.getPost(id)
+        );
     }
 
     @PutMapping("/{id}")
