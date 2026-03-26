@@ -20,8 +20,14 @@ public class PostController {
     }
 
     @PostMapping
-    public void createPost(@RequestBody PostCreateRequest request) {
+    public ApiResponse<Void> createPost(@RequestBody PostCreateRequest request) {
         service.createPost(request);
+
+        return new ApiResponse<>(
+                "SUCCESS",
+                "등록 성공",
+                null
+        );
     }
 
     @GetMapping
@@ -43,12 +49,24 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    public void updatePost(@PathVariable Long id, @RequestBody PostUpdateRequest request) {
+    public ApiResponse<Void> updatePost(@PathVariable Long id, @RequestBody PostUpdateRequest request) {
         service.updatePost(id, request);
+
+        return new ApiResponse<>(
+                "SUCCESS",
+                "수정 성공",
+                null
+        );
     }
 
     @DeleteMapping("/{id}")
-    public void deletePost(@PathVariable Long id) {
+    public ApiResponse<Void> deletePost(@PathVariable Long id) {
         service.deletePost(id);
+
+        return new ApiResponse<>(
+                "SUCCESS",
+                "삭제 성공",
+                null
+        );
     }
 }
