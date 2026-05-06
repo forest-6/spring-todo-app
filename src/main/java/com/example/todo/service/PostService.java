@@ -38,7 +38,7 @@ public class PostService {
                 )).toList();
     }
 
-    public PostResponse getPost(Long id) {
+    public PostResponse getPost(String id) {
         Post post = repository.findById(id);
 
         if (post == null) {
@@ -52,7 +52,7 @@ public class PostService {
         );
     }
 
-    public void updatePost(Long id, PostUpdateRequest request) {
+    public void updatePost(String id, PostUpdateRequest request) {
         Post post = new Post();
         post.setId(id);
         post.setTitle(request.getTitle());
@@ -61,7 +61,7 @@ public class PostService {
         repository.update(post);
     }
 
-    public void deletePost(Long id) {
+    public void deletePost(String id) {
         repository.delete(id);
     }
 }

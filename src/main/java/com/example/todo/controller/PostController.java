@@ -40,7 +40,7 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<PostResponse> getPost(@PathVariable Long id) {
+    public ApiResponse<PostResponse> getPost(@PathVariable String id) {
         return new ApiResponse<>(
                 "SUCCESS",
                 "조회 성공",
@@ -49,7 +49,7 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Void> updatePost(@PathVariable Long id, @RequestBody PostUpdateRequest request) {
+    public ApiResponse<Void> updatePost(@PathVariable String id, @RequestBody PostUpdateRequest request) {
         service.updatePost(id, request);
 
         return new ApiResponse<>(
@@ -60,7 +60,7 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> deletePost(@PathVariable Long id) {
+    public ApiResponse<Void> deletePost(@PathVariable String id) {
         service.deletePost(id);
 
         return new ApiResponse<>(
