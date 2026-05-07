@@ -34,7 +34,7 @@ public class PostController {
     public ApiResponse<List<PostResponse>> getPosts() {
         return new ApiResponse<>(
                 "SUCCESS",
-                "조회성공",
+                "조회 성공",
                 service.getAllPosts()
         );
     }

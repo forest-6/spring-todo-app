@@ -1,6 +1,6 @@
 package com.example.todo.service;
 
-import com.example.todo.domain.Post;
+import com.example.todo.domain.PostEntity;
 import com.example.todo.dto.post.PostCreateRequest;
 import com.example.todo.dto.post.PostResponse;
 import com.example.todo.dto.post.PostUpdateRequest;
@@ -20,7 +20,7 @@ public class PostService {
     }
 
     public void createPost(PostCreateRequest request) {
-        Post post = new Post();
+        PostEntity post = new PostEntity();
         post.setTitle(request.getTitle());
         post.setContent(request.getContent());
 
@@ -28,7 +28,7 @@ public class PostService {
     }
 
     public List<PostResponse> getAllPosts() {
-        List<Post> posts = repository.findAll();
+        List<PostEntity> posts = repository.findAll();
 
         return posts.stream()
                 .map(post -> new PostResponse(
@@ -39,7 +39,7 @@ public class PostService {
     }
 
     public PostResponse getPost(String id) {
-        Post post = repository.findById(id);
+        PostEntity post = repository.findById(id);
 
         if (post == null) {
             throw new PostNotFoundException();
@@ -53,7 +53,7 @@ public class PostService {
     }
 
     public void updatePost(String id, PostUpdateRequest request) {
-        Post post = new Post();
+        PostEntity post = new PostEntity();
         post.setId(id);
         post.setTitle(request.getTitle());
         post.setContent(request.getContent());

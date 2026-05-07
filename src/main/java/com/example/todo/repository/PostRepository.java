@@ -1,7 +1,6 @@
 package com.example.todo.repository;
 
-import com.example.todo.domain.Post;
-import com.example.todo.dto.post.PostCreateRequest;
+import com.example.todo.domain.PostEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -17,23 +16,23 @@ public class PostRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void save(Post post) {
+    public void save(PostEntity post) {
         String uuid = UUID.randomUUID().toString();
         String sql = "INSERT INTO posts (id, title, content) VALUES (?, ?, ?)";
         jdbcTemplate.update(sql, uuid, post.getTitle(), post.getContent());
     }
 
-    public List<Post> findAll() {
+    public List<PostEntity> findAll() {
         String sql = "SELECT * FROM posts";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new Post(rs.getString("id"), rs.getString("title"), rs.getString("content")));
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new PostEntity(rs.getString("id"), rs.getString("title"), rs.getString("content")));
     }
 
-    public Post findById(String id) {
+    public PostEntity findById(String id) {
         String sql = "SELECT * FROM posts WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new Post(rs.getString("id"), rs.getString("title"), rs.getString("content")), id);
+        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new PostEntity(rs.getString("id"), rs.getString("title"), rs.getString("content")), id);
     }
 
-    public void update(Post post) {
+    public void update(PostEntity post) {
         String sql = "UPDATE posts SET title = ?, content = ? WHERE id = ?";
         jdbcTemplate.update(sql, post.getTitle(), post.getContent(), post.getId());
     }

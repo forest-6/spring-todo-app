@@ -9,7 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Post {
+public class PostEntity {
     private String id;
     private String title;
     private String content;
