@@ -4,7 +4,7 @@ import com.example.todo.domain.PostEntity;
 import com.example.todo.dto.post.PostCreateRequest;
 import com.example.todo.dto.post.PostResponse;
 import com.example.todo.dto.post.PostUpdateRequest;
-import com.example.todo.exception.PostNotFoundException;
+import com.example.todo.exception.post.PostNotFoundException;
 import com.example.todo.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
@@ -39,11 +39,7 @@ public class PostService {
     }
 
     public PostResponse getPost(String id) {
-        PostEntity post = repository.findById(id);
-
-        if (post == null) {
-            throw new PostNotFoundException();
-        }
+        PostEntity post = repository.findById(id).orElseThrow(() -> new PostNotFoundException(id));
 
         return new PostResponse(
                 post.getId(),

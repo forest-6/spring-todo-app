@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -27,9 +28,9 @@ public class PostRepository {
         return jdbcTemplate.query(sql, (rs, rowNum) -> new PostEntity(rs.getString("id"), rs.getString("title"), rs.getString("content")));
     }
 
-    public PostEntity findById(String id) {
+    public Optional<PostEntity> findById(String id) {
         String sql = "SELECT * FROM posts WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new PostEntity(rs.getString("id"), rs.getString("title"), rs.getString("content")), id);
+        return Optional.ofNullable(jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new PostEntity(rs.getString("id"), rs.getString("title"), rs.getString("content")), id));
     }
 
     public void update(PostEntity post) {
