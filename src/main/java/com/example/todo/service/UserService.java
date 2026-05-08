@@ -4,10 +4,13 @@ import com.example.todo.dto.user.UserCreateRequest;
 import com.example.todo.dto.user.UserRequest;
 import com.example.todo.dto.user.UserResponse;
 import com.example.todo.repository.UserRepository;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository repository;
 
@@ -15,12 +18,12 @@ public class UserService {
         this.repository = repository;
     }
 
-    public boolean idCheck(String loginId) {
-        return repository.idCheck(loginId);
+    public boolean existsById(String username) {
+        return repository.findByUsername(username) == null ? false : true;
     }
 
     public void signUp(UserCreateRequest request) {
-        if(repository.idCheck(request.getLoginId())){
+        if (repository.findByUsername(request.getLoginId()) != null) {
             throw new IllegalStateException("이미 사용 중인 아이디입니다.");
         }
 
@@ -29,5 +32,11 @@ public class UserService {
 
     public UserResponse signIn(UserRequest request) {
         return repository.signIn(request);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return repository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username));
     }
 }

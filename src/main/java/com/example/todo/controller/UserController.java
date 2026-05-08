@@ -17,18 +17,16 @@ public class UserController {
         this.service = service;
     }
 
-    @GetMapping("/id-check")
-    public ApiResponse<Boolean> idCheck(@RequestParam("loginId") String loginId) {
-        boolean exists = service.idCheck(loginId);
+    @GetMapping("/exists-by-id")
+    public ApiResponse<Boolean> existsById(@RequestParam("username") String username) {
+        boolean exists = service.existsById(username);
 
-        ApiResponse<Boolean> response = exists
+        return exists
                 ? new ApiResponse<>("EXIST", "이미 사용 중인 아이디입니다.", true)
                 : new ApiResponse<>("NOT_EXIST", "사용 가능한 아이디입니다.", false);
-
-        return response;
     }
 
-    @PostMapping
+    @PostMapping("/signUp")
     public ApiResponse<Void> signUp(@RequestBody UserCreateRequest request) {
         service.signUp(request);
 
@@ -39,7 +37,7 @@ public class UserController {
         );
     }
 
-    @PostMapping
+    @PostMapping("/signIn")
     public ApiResponse<UserResponse> signIn(@RequestBody UserRequest request) {
         return new ApiResponse<>(
                 "SUCCESS",
