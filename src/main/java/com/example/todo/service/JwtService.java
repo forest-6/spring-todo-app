@@ -1,10 +1,10 @@
 package com.example.todo.service;
 
-import com.example.todo.dto.user.UserResponse;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -16,9 +16,10 @@ public class JwtService {
     private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
     private static final SecretKey key = Jwts.SIG.HS256.key().build();
 
-    public String generateAccessToken(UserResponse user) {
+    public String generateAccessToken(UserDetails user) {
         return generateToken(user.getUsername());
     }
+
     public String getUsername(String accessToken) {
         return getSubject(accessToken);
     }
@@ -26,7 +27,12 @@ public class JwtService {
     private String generateToken(String subject) {
         var now = new Date();
         var exp = new Date(now.getTime() + (1000 * 60 * 60 * 3));
-        return Jwts.builder().subject(subject).issuedAt(now).expiration(exp).compact();
+        return Jwts.builder()
+                .subject(subject)
+                .issuedAt(now)
+                .expiration(exp)
+                .signWith(key)
+                .compact();
     }
 
     private String getSubject(String token) {
