@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        String BEARER_PREFIX = "Bearer";
+        String BEARER_PREFIX = "Bearer ";
         var authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
         var securityContext = SecurityContextHolder.getContext();
 
@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (!ObjectUtils.isEmpty(authorization)
                 && authorization.startsWith(BEARER_PREFIX)
                 && securityContext.getAuthentication() == null) {
-            var accessToken = authorization.substring(BEARER_PREFIX.length());
+            var accessToken = authorization.substring(BEARER_PREFIX.length()).trim();
             var username = jwtService.getUsername(accessToken);
             var userDetails = userService.loadUserByUsername(username);
 
