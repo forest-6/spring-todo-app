@@ -1,10 +1,12 @@
 package com.example.todo.controller;
 
 import com.example.todo.common.ApiResponse;
+import com.example.todo.domain.UserEntity;
 import com.example.todo.dto.post.PostCreateRequest;
 import com.example.todo.dto.post.PostResponse;
 import com.example.todo.dto.post.PostUpdateRequest;
 import com.example.todo.service.PostService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,8 +22,10 @@ public class PostController {
     }
 
     @PostMapping
-    public ApiResponse<Void> createPost(@RequestBody PostCreateRequest request) {
-        service.createPost(request);
+    public ApiResponse<Void> createPost(
+            @RequestBody PostCreateRequest request,
+            @AuthenticationPrincipal UserEntity user) {
+        service.createPost(new PostCreateRequest(request.getTitle(), request.getContent(), user.getId()));
 
         return new ApiResponse<>(
                 "SUCCESS",
@@ -49,8 +53,12 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Void> updatePost(@PathVariable Long id, @RequestBody PostUpdateRequest request) {
-        service.updatePost(id, request);
+    public ApiResponse<Void> updatePost(
+            @PathVariable Long id,
+            @RequestBody PostUpdateRequest request,
+            @AuthenticationPrincipal UserEntity user
+    ) {
+        service.updatePost(new PostUpdateRequest(id, request.getTitle(), request.getContent()), user.getId());
 
         return new ApiResponse<>(
                 "SUCCESS",
@@ -60,8 +68,10 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> deletePost(@PathVariable Long id) {
-        service.deletePost(id);
+    public ApiResponse<Void> deletePost(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserEntity user) {
+        service.deletePost(id, user.getId());
 
         return new ApiResponse<>(
                 "SUCCESS",

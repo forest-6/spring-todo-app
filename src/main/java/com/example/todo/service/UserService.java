@@ -1,5 +1,6 @@
 package com.example.todo.service;
 
+import com.example.todo.domain.UserEntity;
 import com.example.todo.dto.user.User;
 import com.example.todo.dto.user.UserTokenResponse;
 import com.example.todo.exception.user.UserAlreadyExistsException;
@@ -25,7 +26,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserEntity loadUserByUsername(String username) throws UsernameNotFoundException {
         return repository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username));
     }

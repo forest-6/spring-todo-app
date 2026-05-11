@@ -1,6 +1,9 @@
 package com.example.todo.repository;
 
 import com.example.todo.domain.PostEntity;
+import com.example.todo.dto.post.PostCreateRequest;
+import com.example.todo.dto.post.PostUpdateRequest;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -16,24 +19,28 @@ public class PostRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void save(PostEntity post) {
-        String sql = "INSERT INTO posts (title, content) VALUES (?, ?)";
-        jdbcTemplate.update(sql, post.getTitle(), post.getContent());
+    public void save(PostCreateRequest request) {
+        String sql = "INSERT INTO posts (title, content, creator_id) VALUES (?, ?, ?)";
+        jdbcTemplate.update(sql, request.getTitle(), request.getContent(), request.getCreatorId());
     }
 
     public List<PostEntity> findAll() {
         String sql = "SELECT * FROM posts";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new PostEntity(rs.getLong("id"), rs.getString("title"), rs.getString("content")));
+        return jdbcTemplate.query(sql,
+                new BeanPropertyRowMapper<>(PostEntity.class));
     }
+
 
     public Optional<PostEntity> findById(Long id) {
         String sql = "SELECT * FROM posts WHERE id = ?";
-        return Optional.ofNullable(jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new PostEntity(rs.getLong("id"), rs.getString("title"), rs.getString("content")), id));
+        return Optional.ofNullable(jdbcTemplate.queryForObject(sql,
+                new BeanPropertyRowMapper<>(PostEntity.class),
+                id));
     }
 
-    public void update(PostEntity post) {
+    public void update(PostUpdateRequest request) {
         String sql = "UPDATE posts SET title = ?, content = ? WHERE id = ?";
-        jdbcTemplate.update(sql, post.getTitle(), post.getContent(), post.getId());
+        jdbcTemplate.update(sql, request.getTitle(), request.getContent(), request.getId());
     }
 
     public void delete(Long id) {

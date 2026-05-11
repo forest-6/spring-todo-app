@@ -13,4 +13,7 @@ public class PostEntity {
     private Long id;
     private String title;
     private String content;
+    private Long creator_id;
+    private String created_at;
+    private String updated_at;
 }
