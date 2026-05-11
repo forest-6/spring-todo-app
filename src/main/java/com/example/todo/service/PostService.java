@@ -38,7 +38,7 @@ public class PostService {
                 )).toList();
     }
 
-    public PostResponse getPost(String id) {
+    public PostResponse getPost(Long id) {
         PostEntity post = repository.findById(id).orElseThrow(() -> new PostNotFoundException(id));
 
         return new PostResponse(
@@ -48,7 +48,7 @@ public class PostService {
         );
     }
 
-    public void updatePost(String id, PostUpdateRequest request) {
+    public void updatePost(Long id, PostUpdateRequest request) {
         PostEntity post = new PostEntity();
         post.setId(id);
         post.setTitle(request.getTitle());
@@ -57,7 +57,7 @@ public class PostService {
         repository.update(post);
     }
 
-    public void deletePost(String id) {
+    public void deletePost(Long id) {
         repository.delete(id);
     }
 }

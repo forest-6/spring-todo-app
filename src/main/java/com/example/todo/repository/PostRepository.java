@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 public class PostRepository {
@@ -18,19 +17,18 @@ public class PostRepository {
     }
 
     public void save(PostEntity post) {
-        String uuid = UUID.randomUUID().toString();
-        String sql = "INSERT INTO posts (id, title, content) VALUES (?, ?, ?)";
-        jdbcTemplate.update(sql, uuid, post.getTitle(), post.getContent());
+        String sql = "INSERT INTO posts (title, content) VALUES (?, ?)";
+        jdbcTemplate.update(sql, post.getTitle(), post.getContent());
     }
 
     public List<PostEntity> findAll() {
         String sql = "SELECT * FROM posts";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new PostEntity(rs.getString("id"), rs.getString("title"), rs.getString("content")));
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new PostEntity(rs.getLong("id"), rs.getString("title"), rs.getString("content")));
     }
 
-    public Optional<PostEntity> findById(String id) {
+    public Optional<PostEntity> findById(Long id) {
         String sql = "SELECT * FROM posts WHERE id = ?";
-        return Optional.ofNullable(jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new PostEntity(rs.getString("id"), rs.getString("title"), rs.getString("content")), id));
+        return Optional.ofNullable(jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new PostEntity(rs.getLong("id"), rs.getString("title"), rs.getString("content")), id));
     }
 
     public void update(PostEntity post) {
@@ -38,7 +36,7 @@ public class PostRepository {
         jdbcTemplate.update(sql, post.getTitle(), post.getContent(), post.getId());
     }
 
-    public void delete(String id) {
+    public void delete(Long id) {
         String sql = "DELETE FROM posts WHERE id = ?";
         jdbcTemplate.update(sql, id);
     }
