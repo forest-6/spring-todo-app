@@ -1,42 +1,51 @@
 package com.example.todo.service;
 
-import com.example.todo.dto.user.UserCreateRequest;
-import com.example.todo.dto.user.UserRequest;
-import com.example.todo.dto.user.UserResponse;
+import com.example.todo.dto.user.User;
+import com.example.todo.dto.user.UserTokenResponse;
+import com.example.todo.exception.user.UserAlreadyExistsException;
 import com.example.todo.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService implements UserDetailsService {
 
     private final UserRepository repository;
+    private final JwtService jwtService;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository repository) {
+    public UserService(UserRepository repository, JwtService jwtService) {
         this.repository = repository;
-    }
-
-    public boolean existsById(String username) {
-        return repository.findByUsername(username) == null ? false : true;
-    }
-
-    public void signUp(UserCreateRequest request) {
-        if (repository.findByUsername(request.getLoginId()) != null) {
-            throw new IllegalStateException("이미 사용 중인 아이디입니다.");
-        }
-
-        repository.signUp(request);
-    }
-
-    public UserResponse signIn(UserRequest request) {
-        return repository.signIn(request);
+        this.jwtService = jwtService;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return repository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username));
+    }
+
+    public User signUp(String username, String password) {
+        repository
+                .findByUsername(username)
+                .ifPresent(user -> { throw new UserAlreadyExistsException(); });
+
+        var userEntity = repository.signUp(username, passwordEncoder.encode(password));
+        return User.from(userEntity);
+    }
+
+    public UserTokenResponse signIn(String username, String password) {
+        UserDetails user = loadUserByUsername(username);
+        if(!passwordEncoder.matches(password, user.getPassword())){
+            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        }
+
+        String accessToken = jwtService.generateAccessToken(user);
+        return new UserTokenResponse(accessToken);
     }
 }

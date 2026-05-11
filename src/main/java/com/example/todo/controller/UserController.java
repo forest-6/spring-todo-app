@@ -1,14 +1,14 @@
 package com.example.todo.controller;
 
-import com.example.todo.common.ApiResponse;
-import com.example.todo.dto.user.UserCreateRequest;
-import com.example.todo.dto.user.UserRequest;
-import com.example.todo.dto.user.UserResponse;
+import com.example.todo.dto.user.User;
+import com.example.todo.dto.user.UserAuthRequest;
+import com.example.todo.dto.user.UserTokenResponse;
 import com.example.todo.service.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/v1/users")
 public class UserController {
 
     private final UserService service;
@@ -17,32 +17,17 @@ public class UserController {
         this.service = service;
     }
 
-    @GetMapping("/exists-by-id")
-    public ApiResponse<Boolean> existsById(@RequestParam("username") String username) {
-        boolean exists = service.existsById(username);
 
-        return exists
-                ? new ApiResponse<>("EXIST", "이미 사용 중인 아이디입니다.", true)
-                : new ApiResponse<>("NOT_EXIST", "사용 가능한 아이디입니다.", false);
+
+    @PostMapping("/signup")
+    public ResponseEntity<User> signUp(@RequestBody UserAuthRequest request) {
+        var user = service.signUp(request.getUsername(), request.getPassword());
+        return ResponseEntity.ok(user);
     }
 
-    @PostMapping("/signUp")
-    public ApiResponse<Void> signUp(@RequestBody UserCreateRequest request) {
-        service.signUp(request);
-
-        return new ApiResponse<>(
-                "SUCCESS",
-                "회원가입 성공",
-                null
-        );
-    }
-
-    @PostMapping("/signIn")
-    public ApiResponse<UserResponse> signIn(@RequestBody UserRequest request) {
-        return new ApiResponse<>(
-                "SUCCESS",
-                "로그인 성공",
-                service.signIn(request)
-        );
+    @PostMapping("/signin")
+    public ResponseEntity<UserTokenResponse> signIn(@RequestBody UserAuthRequest request) {
+        var token = service.signIn(request.getUsername(), request.getPassword());
+        return ResponseEntity.ok(token);
     }
 }

@@ -1,12 +1,13 @@
 package com.example.todo.repository;
 
 import com.example.todo.domain.UserEntity;
-import com.example.todo.dto.user.UserCreateRequest;
-import com.example.todo.dto.user.UserRequest;
-import com.example.todo.dto.user.UserResponse;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -19,30 +20,20 @@ public class UserRepository {
     }
 
     public Optional<UserEntity> findByUsername(String username) {
-        String sql = "SELECT COUNT(*) FROM users WHERE username = ?";
-        return Optional.ofNullable(jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new UserEntity(
-                rs.getLong("id"),
-                rs.getString("username"),
-                rs.getString("password"),
-                rs.getString("created_at")
-        ), username));
+        String sql = "SELECT * FROM users WHERE username = ?";
+        List<UserEntity> results = jdbcTemplate.query(sql,
+                new BeanPropertyRowMapper<>(UserEntity.class),
+                username);
+
+        return results.stream().findFirst();
     }
 
-    public void signUp(UserCreateRequest request) {
-        String sql = "INSERT INTO users (username, password, name) VALUES (?, ?, ?)";
-        jdbcTemplate.update(sql, request.getLoginId(), request.getPassword(), request.getName());
-    }
+    @Transactional
+    public UserEntity signUp(String username, String password) {
+        String sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+        jdbcTemplate.update(sql, username, password);
 
-    public UserResponse signIn(UserRequest request) {
-        String sql = "SELECET * FROM users WHERE username = ?, password = ?";
-        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new UserResponse(
-                        rs.getLong("id"),
-                        rs.getString("username"),
-                        rs.getString("password"),
-                        rs.getString("created_at")
-                ),
-                request.getLoginId(),
-                request.getPassword()
-        );
+        return findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
     }
 }
