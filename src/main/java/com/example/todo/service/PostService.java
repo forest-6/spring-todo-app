@@ -28,19 +28,19 @@ public class PostService {
     public List<PostResponse> getAllPosts() {
         List<PostEntity> posts = postRepository.findAll();
 
-        return posts.stream().map(post -> new PostResponse(post)).toList();
+        return posts.stream().map(post -> PostResponse.from(post)).toList();
     }
 
     public PostResponse getPost(Long id) {
         PostEntity post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException(id));
 
-        return new PostResponse(post);
+        return PostResponse.from(post);
     }
 
     public void updatePost(PostUpdateRequest request, Long userId) {
-        var postDetail = getPost(request.getId());
+        var postDetail = getPost(request.id());
 
-        if (!postDetail.getCreatorId().equals(userId)) {
+        if (!postDetail.creatorId().equals(userId)) {
             throw new ClientErrorException(HttpStatus.FORBIDDEN, "수정 권한이 없습니다.");
         }
 
@@ -50,7 +50,7 @@ public class PostService {
     public void deletePost(Long id, Long userId) {
         var postDetail = getPost(id);
 
-        if (!postDetail.getCreatorId().equals(userId)) {
+        if (!postDetail.creatorId().equals(userId)) {
             throw new ClientErrorException(HttpStatus.FORBIDDEN, "삭제 권한이 없습니다.");
         }
 

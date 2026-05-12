@@ -25,7 +25,7 @@ public class PostController {
     public ApiResponse<Void> createPost(
             @RequestBody PostCreateRequest request,
             @AuthenticationPrincipal UserEntity user) {
-        service.createPost(new PostCreateRequest(request.getTitle(), request.getContent(), user.getId()));
+        service.createPost(new PostCreateRequest(request.title(), request.content(), user.getId()));
 
         return new ApiResponse<>(
                 "SUCCESS",
@@ -58,7 +58,7 @@ public class PostController {
             @RequestBody PostUpdateRequest request,
             @AuthenticationPrincipal UserEntity user
     ) {
-        service.updatePost(new PostUpdateRequest(id, request.getTitle(), request.getContent()), user.getId());
+        service.updatePost(new PostUpdateRequest(id, request.title(), request.content()), user.getId());
 
         return new ApiResponse<>(
                 "SUCCESS",

@@ -27,7 +27,7 @@ public class PostRepository {
 
     public void save(PostCreateRequest request) {
         String sql = "INSERT INTO posts (title, content, creator_id) VALUES (?, ?, ?)";
-        jdbcTemplate.update(sql, request.getTitle(), request.getContent(), request.getCreatorId());
+        jdbcTemplate.update(sql, request.title(), request.content(), request.creatorId());
     }
 
     public List<PostEntity> findAll() {
@@ -46,7 +46,7 @@ public class PostRepository {
 
     public void update(PostUpdateRequest request) {
         String sql = "UPDATE posts SET title = ?, content = ? WHERE id = ?";
-        jdbcTemplate.update(sql, request.getTitle(), request.getContent(), request.getId());
+        jdbcTemplate.update(sql, request.title(), request.content(), request.id());
     }
 
     public void delete(Long id) {

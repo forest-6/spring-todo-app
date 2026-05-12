@@ -19,13 +19,13 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<User> signUp(@RequestBody UserAuthRequest request) {
-        var user = service.signUp(request.getUsername(), request.getPassword());
+        var user = service.signUp(request.username(), request.password());
         return ResponseEntity.ok(user);
     }
 
     @PostMapping("/signin")
     public ResponseEntity<UserTokenResponse> signIn(@RequestBody UserAuthRequest request) {
-        var token = service.signIn(request.getUsername(), request.getPassword());
+        var token = service.signIn(request.username(), request.password());
         return ResponseEntity.ok(token);
     }
 }

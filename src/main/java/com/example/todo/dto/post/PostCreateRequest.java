@@ -4,11 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
-@AllArgsConstructor
-public class PostCreateRequest {
-    private String title;
-    private String content;
-    private Long creatorId;
+public record PostCreateRequest(
+        String title,
+        String content,
+        Long creatorId
+) {
 }
