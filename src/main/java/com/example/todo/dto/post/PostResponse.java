@@ -3,6 +3,7 @@ package com.example.todo.dto.post;
 import com.example.todo.domain.PostEntity;
 
 public record PostResponse(
+        Long rn,
         Long id,
         String title,
         String content,
@@ -11,6 +12,7 @@ public record PostResponse(
         String updatedAt) {
     public static PostResponse from(PostEntity postEntity) {
         return new PostResponse(
+                postEntity.getRn(),
                 postEntity.getId(),
                 postEntity.getTitle(),
                 postEntity.getContent(),

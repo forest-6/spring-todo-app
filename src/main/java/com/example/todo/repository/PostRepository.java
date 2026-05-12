@@ -30,10 +30,33 @@ public class PostRepository {
         jdbcTemplate.update(sql, request.title(), request.content(), request.creatorId());
     }
 
-    public List<PostEntity> findAll() {
-        String sql = "SELECT * FROM posts";
+    public List<PostEntity> findAllPaged(int pageSize, int pageIndex) {
+        // rownum 방식
+        // "SELECT * from " +
+        // "(SELECT @rownum := @rownum + 1 as rn, id, title, content, creator_id, created_at, updated_at " +
+        // "FROM posts, (SELECT @rownum := 0) as rowcolumn order by created_at DESC) " +
+        // "WHERE rn > 0 AND rn <= 10;";
+
+        int offset = (pageIndex - 1) * pageSize;
+        int start = offset + 1;
+        int end = offset + pageSize;
+
+        String sql = "SELECT * FROM (" +
+                "   SELECT ROW_NUMBER() OVER (ORDER BY created_at DESC, id DESC) AS rn, p.* " +
+                "   FROM posts p" +
+                ") AS t " +
+                "WHERE rn BETWEEN ? AND ?";
+
         return jdbcTemplate.query(sql,
-                new BeanPropertyRowMapper<>(PostEntity.class));
+                new BeanPropertyRowMapper<>(PostEntity.class),
+                start, end);
+    }
+
+    public int getTotalCount() {
+        String sql = "SELECT COUNT(*) FROM posts";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
+
+        return (count != null) ? count : 0;
     }
 
 

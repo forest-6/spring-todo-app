@@ -1,5 +1,6 @@
 package com.example.todo.service;
 
+import com.example.todo.dto.common.PagingResult;
 import com.example.todo.domain.PostEntity;
 import com.example.todo.dto.post.PostCreateRequest;
 import com.example.todo.dto.post.PostResponse;
@@ -25,10 +26,12 @@ public class PostService {
         postRepository.save(request);
     }
 
-    public List<PostResponse> getAllPosts() {
-        List<PostEntity> posts = postRepository.findAll();
+    public PagingResult<PostResponse> getPostPage(int pageSize, int pageIndex) {
+        List<PostEntity> posts = postRepository.findAllPaged(pageSize, pageIndex);
+        int totalCount = postRepository.getTotalCount();
+        var rows = posts.stream().map(post -> PostResponse.from(post)).toList();
 
-        return posts.stream().map(post -> PostResponse.from(post)).toList();
+        return PagingResult.of(totalCount, pageSize, pageIndex, rows);
     }
 
     public PostResponse getPost(Long id) {

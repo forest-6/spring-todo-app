@@ -1,5 +1,6 @@
 package com.example.todo.controller;
 
+import com.example.todo.dto.common.PagingResult;
 import com.example.todo.domain.UserEntity;
 import com.example.todo.dto.post.PostCreateRequest;
 import com.example.todo.dto.post.PostResponse;
@@ -8,8 +9,6 @@ import com.example.todo.service.PostService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -31,8 +30,11 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostResponse>> getPosts() {
-        return ResponseEntity.ok(service.getAllPosts());
+    public ResponseEntity<PagingResult<PostResponse>> getPosts(
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(defaultValue = "1") int pageIndex
+    ) {
+        return ResponseEntity.ok(service.getPostPage(pageSize, pageIndex));
     }
 
     @GetMapping("/{id}")

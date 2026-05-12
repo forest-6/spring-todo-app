@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PostEntity {
+    private Long rn;
     private Long id;
     private String title;
     private String content;
