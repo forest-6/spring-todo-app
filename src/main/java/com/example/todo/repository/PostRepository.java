@@ -19,6 +19,12 @@ public class PostRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    public boolean existsById(Long id) {
+        String sql = "SELECT COUNT(*) FROM posts WHERE id = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, id);
+        return count != null && count > 0;
+    }
+
     public void save(PostCreateRequest request) {
         String sql = "INSERT INTO posts (title, content, creator_id) VALUES (?, ?, ?)";
         jdbcTemplate.update(sql, request.getTitle(), request.getContent(), request.getCreatorId());

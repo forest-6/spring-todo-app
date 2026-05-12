@@ -9,6 +9,6 @@ public class UserAlreadyExistsException extends ClientErrorException {
     }
 
     public UserAlreadyExistsException(String username) {
-        super(HttpStatus.CONFLICT, "User with username" + username + " already exists.");
+        super(HttpStatus.CONFLICT, "User with username " + username + " already exists.");
     }
 }

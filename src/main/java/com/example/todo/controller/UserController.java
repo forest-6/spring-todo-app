@@ -17,8 +17,6 @@ public class UserController {
         this.service = service;
     }
 
-
-
     @PostMapping("/signup")
     public ResponseEntity<User> signUp(@RequestBody UserAuthRequest request) {
         var user = service.signUp(request.getUsername(), request.getPassword());
