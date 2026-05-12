@@ -2,6 +2,7 @@ package com.example.todo.repository;
 
 import com.example.todo.domain.PostEntity;
 import com.example.todo.dto.post.PostCreateRequest;
+import com.example.todo.dto.post.PostSearchRequest;
 import com.example.todo.dto.post.PostUpdateRequest;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -30,32 +31,38 @@ public class PostRepository {
         jdbcTemplate.update(sql, request.title(), request.content(), request.creatorId());
     }
 
-    public List<PostEntity> findAllPaged(int pageSize, int pageIndex) {
+    public List<PostEntity> findAllPaged(PostSearchRequest request) {
         // rownum 방식
         // "SELECT * from " +
         // "(SELECT @rownum := @rownum + 1 as rn, id, title, content, creator_id, created_at, updated_at " +
         // "FROM posts, (SELECT @rownum := 0) as rowcolumn order by created_at DESC) " +
         // "WHERE rn > 0 AND rn <= 10;";
+        String keyword = (request.searchKeyword() == null) ? "" : request.searchKeyword().toLowerCase();
 
-        int offset = (pageIndex - 1) * pageSize;
+        int offset = (request.pageIndex() - 1) * request.pageSize();
         int start = offset + 1;
-        int end = offset + pageSize;
+        int end = offset + request.pageSize();
 
-        String sql = "SELECT * FROM (" +
+        String sql = "SELECT T.* FROM (" +
                 "   SELECT ROW_NUMBER() OVER (ORDER BY created_at DESC, id DESC) AS rn, p.* " +
-                "   FROM posts p" +
-                ") AS t " +
+                "   FROM posts P" +
+                "   WHERE LOWER(P.title) LIKE CONCAT('%', ?, '%')" +
+                ") T " +
                 "WHERE rn BETWEEN ? AND ?";
 
         return jdbcTemplate.query(sql,
                 new BeanPropertyRowMapper<>(PostEntity.class),
-                start, end);
+                keyword,
+                start,
+                end);
     }
 
-    public int getTotalCount() {
-        String sql = "SELECT COUNT(*) FROM posts";
-        Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
+    public int getTotalCount(String searchKeyword) {
+        String keyword = (searchKeyword == null) ? "" : searchKeyword.toLowerCase();
 
+        String sql = "SELECT COUNT(*) FROM posts" +
+                " WHERE LOWER(title) LIKE CONCAT('%', ?, '%')";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, keyword);
         return (count != null) ? count : 0;
     }
 

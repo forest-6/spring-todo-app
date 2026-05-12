@@ -4,6 +4,7 @@ import com.example.todo.dto.common.PagingResult;
 import com.example.todo.domain.PostEntity;
 import com.example.todo.dto.post.PostCreateRequest;
 import com.example.todo.dto.post.PostResponse;
+import com.example.todo.dto.post.PostSearchRequest;
 import com.example.todo.dto.post.PostUpdateRequest;
 import com.example.todo.exception.ClientErrorException;
 import com.example.todo.exception.post.PostNotFoundException;
@@ -26,12 +27,12 @@ public class PostService {
         postRepository.save(request);
     }
 
-    public PagingResult<PostResponse> getPostPage(int pageSize, int pageIndex) {
-        List<PostEntity> posts = postRepository.findAllPaged(pageSize, pageIndex);
-        int totalCount = postRepository.getTotalCount();
+    public PagingResult<PostResponse> getPostPage(PostSearchRequest request) {
+        List<PostEntity> posts = postRepository.findAllPaged(request);
+        int totalCount = postRepository.getTotalCount(request.searchKeyword());
         var rows = posts.stream().map(post -> PostResponse.from(post)).toList();
 
-        return PagingResult.of(totalCount, pageSize, pageIndex, rows);
+        return PagingResult.of(totalCount, request.pageSize(), request.pageIndex(), rows);
     }
 
     public PostResponse getPost(Long id) {

@@ -4,6 +4,7 @@ import com.example.todo.dto.common.PagingResult;
 import com.example.todo.domain.UserEntity;
 import com.example.todo.dto.post.PostCreateRequest;
 import com.example.todo.dto.post.PostResponse;
+import com.example.todo.dto.post.PostSearchRequest;
 import com.example.todo.dto.post.PostUpdateRequest;
 import com.example.todo.service.PostService;
 import org.springframework.http.ResponseEntity;
@@ -31,10 +32,9 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<PagingResult<PostResponse>> getPosts(
-            @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "1") int pageIndex
+            @ModelAttribute PostSearchRequest request
     ) {
-        return ResponseEntity.ok(service.getPostPage(pageSize, pageIndex));
+        return ResponseEntity.ok(service.getPostPage(request));
     }
 
     @GetMapping("/{id}")
