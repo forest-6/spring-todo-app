@@ -44,7 +44,7 @@ public class PostRepository {
         int end = offset + request.pageSize();
 
         String sql = "SELECT T.* FROM (" +
-                "   SELECT ROW_NUMBER() OVER (ORDER BY created_at DESC, id DESC) AS rn, p.* " +
+                "   SELECT ROW_NUMBER() OVER (ORDER BY created_at DESC, id DESC) AS rn, P.* " +
                 "   FROM posts P" +
                 "   WHERE LOWER(P.title) LIKE CONCAT('%', ?, '%')" +
                 ") T " +
@@ -65,7 +65,6 @@ public class PostRepository {
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, keyword);
         return (count != null) ? count : 0;
     }
-
 
     public Optional<PostEntity> findById(Long id) {
         String sql = "SELECT * FROM posts WHERE id = ?";

@@ -37,7 +37,9 @@ public class WebConfiguration {
         http.cors(Customizer.withDefaults())
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers(HttpMethod.POST,
-                                "/api/*/users/signup", "/api/*/users/signin")
+                                "/api/*/users/signup",
+                                "/api/*/users/signin",
+                                "/api/*/users/refresh-token")
                         .permitAll()
                         .anyRequest()
                         .authenticated())
@@ -45,7 +47,7 @@ public class WebConfiguration {
                         (session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(CsrfConfigurer::disable)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .httpBasic(Customizer.withDefaults());
+                .httpBasic(httpBasic -> httpBasic.disable());
 
         return http.build();
     }

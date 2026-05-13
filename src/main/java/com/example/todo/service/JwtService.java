@@ -17,16 +17,20 @@ public class JwtService {
     private static final SecretKey key = Jwts.SIG.HS256.key().build();
 
     public String generateAccessToken(UserDetails user) {
-        return generateToken(user.getUsername());
+        return generateToken(user.getUsername(), 1000 * 60 * 60 * 3);
+    }
+
+    public String generateRefreshToken(UserDetails user) {
+        return generateToken(user.getUsername(), 1000 * 60 * 60 * 24 * 7);
     }
 
     public String getUsername(String accessToken) {
         return getSubject(accessToken);
     }
 
-    private String generateToken(String subject) {
+    private String generateToken(String subject, int time) {
         var now = new Date();
-        var exp = new Date(now.getTime() + (1000 * 60 * 60 * 3));
+        var exp = new Date(now.getTime() + (time));
         return Jwts.builder()
                 .subject(subject)
                 .issuedAt(now)
@@ -41,6 +45,15 @@ public class JwtService {
         } catch (JwtException e) {
             logger.error("JwtException", e);
             throw e;
+        }
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
         }
     }
 }
