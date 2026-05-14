@@ -6,8 +6,12 @@ import com.example.todo.dto.post.PostSearchRequest;
 import com.example.todo.dto.post.PostUpdateRequest;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,9 +30,20 @@ public class PostRepository {
         return count != null && count > 0;
     }
 
-    public void save(PostCreateRequest request) {
+    public long save(PostCreateRequest request) {
         String sql = "INSERT INTO posts (title, content, creator_id) VALUES (?, ?, ?)";
-        jdbcTemplate.update(sql, request.title(), request.content(), request.creatorId());
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, request.title());
+            ps.setString(2, request.content());
+            ps.setLong(3, request.creatorId());
+            return ps;
+        }, keyHolder);
+
+        return keyHolder.getKey().longValue();
     }
 
     public List<PostEntity> findAllPaged(PostSearchRequest request) {

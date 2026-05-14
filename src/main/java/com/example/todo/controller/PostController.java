@@ -10,6 +10,10 @@ import com.example.todo.service.PostService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -23,9 +27,10 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<Void> createPost(
-            @RequestBody PostCreateRequest request,
-            @AuthenticationPrincipal UserEntity user) {
-        service.createPost(new PostCreateRequest(request.title(), request.content(), user.getId()));
+            @RequestPart("post") PostCreateRequest request,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files,
+            @AuthenticationPrincipal UserEntity user) throws IOException {
+        service.createPost(new PostCreateRequest(request.title(), request.content(), user.getId()),files);
 
         return ResponseEntity.ok().build();
     }

@@ -1,3 +1,5 @@
 spring:
   profiles:
     default: local
+file:
+  upload-dir: C:/todo_upload/
