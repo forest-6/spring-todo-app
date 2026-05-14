@@ -12,7 +12,7 @@ public record User(
         return new User(
                 userEntity.getId(),
                 userEntity.getUsername(),
-                userEntity.getCreatedAt()
+                userEntity.getCreated_at()
         );
     }
 }

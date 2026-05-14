@@ -1,5 +1,6 @@
 package com.example.todo.repository;
 
+import com.example.todo.domain.FileEntity;
 import com.example.todo.domain.PostEntity;
 import com.example.todo.dto.post.PostCreateRequest;
 import com.example.todo.dto.post.PostSearchRequest;
@@ -30,7 +31,7 @@ public class PostRepository {
         return count != null && count > 0;
     }
 
-    public long save(PostCreateRequest request) {
+    public Long save(PostCreateRequest request) {
         String sql = "INSERT INTO posts (title, content, creator_id) VALUES (?, ?, ?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -86,6 +87,15 @@ public class PostRepository {
         return Optional.ofNullable(jdbcTemplate.queryForObject(sql,
                 new BeanPropertyRowMapper<>(PostEntity.class),
                 id));
+    }
+
+    public List<FileEntity> findFilesByPostId(Long postId) {
+        String sql = "SELECT * FROM post_files WHERE post_id = ?";
+
+        return jdbcTemplate.query(sql,
+                new BeanPropertyRowMapper<>(FileEntity.class),
+                postId
+        );
     }
 
     public void update(PostUpdateRequest request) {

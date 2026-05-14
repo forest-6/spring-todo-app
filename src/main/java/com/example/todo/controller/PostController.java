@@ -2,10 +2,7 @@ package com.example.todo.controller;
 
 import com.example.todo.dto.common.PagingResult;
 import com.example.todo.domain.UserEntity;
-import com.example.todo.dto.post.PostCreateRequest;
-import com.example.todo.dto.post.PostResponse;
-import com.example.todo.dto.post.PostSearchRequest;
-import com.example.todo.dto.post.PostUpdateRequest;
+import com.example.todo.dto.post.*;
 import com.example.todo.service.PostService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -43,7 +40,7 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostResponse> getPost(@PathVariable Long id) {
+    public ResponseEntity<PostDetailResponse> getPost(@PathVariable Long id) {
         return ResponseEntity.ok(service.getPost(id));
     }
 

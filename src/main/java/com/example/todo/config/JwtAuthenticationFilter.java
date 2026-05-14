@@ -30,11 +30,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         String method = request.getMethod();
 
-        return "POST".equalsIgnoreCase(method) && (
+        boolean isPostAllowed = "POST".equalsIgnoreCase(method) && (
                 path.matches("^/api/[^/]+/users/signup$") ||
                         path.matches("^/api/[^/]+/users/signin$") ||
-                        path.matches("^/api/[^/]+/users/refresh-token")
+                        path.matches("^/api/[^/]+/users/refresh-token$")
         );
+
+        boolean isGetAllowed = "GET".equalsIgnoreCase(method) && path.startsWith("^/api/[^/]+/files/");
+
+        return isPostAllowed || isGetAllowed;
     }
 
     @Override

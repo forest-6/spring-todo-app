@@ -20,7 +20,7 @@ public class UserEntity implements UserDetails {
     private Long id;
     private String username;
     private String password;
-    private String createdAt;
+    private String created_at;
 
     public static UserEntity of(String username, String password) {
         var userEntity = new UserEntity();

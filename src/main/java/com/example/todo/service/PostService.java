@@ -2,7 +2,8 @@ package com.example.todo.service;
 
 import com.example.todo.dto.common.PagingResult;
 import com.example.todo.domain.PostEntity;
-import com.example.todo.dto.file.FileEntity;
+import com.example.todo.dto.file.FileRequest;
+import com.example.todo.dto.file.FileResponse;
 import com.example.todo.dto.post.*;
 import com.example.todo.exception.ClientErrorException;
 import com.example.todo.exception.post.PostNotFoundException;
@@ -35,7 +36,7 @@ public class PostService {
 
     @Transactional(rollbackFor = Exception.class)
     public void createPost(PostCreateRequest post, List<MultipartFile> files) throws IOException {
-        long postId = postRepository.save(post);
+        Long postId = postRepository.save(post);
 
         if (files == null || files.isEmpty()) return;
 
@@ -51,7 +52,7 @@ public class PostService {
 
             file.transferTo(new File(fullPath));
 
-            FileEntity fileEntity = new FileEntity(postId, originName, storedName, fullPath, file.getSize());
+            FileRequest fileEntity = new FileRequest(postId, originName, storedName, fullPath, file.getSize());
 
             fileRepository.save(fileEntity);
         }
@@ -65,10 +66,12 @@ public class PostService {
         return PagingResult.of(totalCount, request.pageSize(), request.pageIndex(), rows);
     }
 
-    public PostResponse getPost(Long id) {
+    public PostDetailResponse getPost(Long id) {
         PostEntity post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException(id));
+        List<FileResponse> files = postRepository.findFilesByPostId(id)
+                .stream().map(file -> FileResponse.from(file)).toList();
 
-        return PostResponse.from(post);
+        return PostDetailResponse.from(post, files);
     }
 
     public void updatePost(PostUpdateRequest request, Long userId) {

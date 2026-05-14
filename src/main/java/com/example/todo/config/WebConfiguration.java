@@ -41,6 +41,8 @@ public class WebConfiguration {
                                 "/api/*/users/signin",
                                 "/api/*/users/refresh-token")
                         .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/*/files/*")
+                        .permitAll()
                         .anyRequest()
                         .authenticated())
                 .sessionManagement(

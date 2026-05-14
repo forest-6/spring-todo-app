@@ -1,6 +1,6 @@
 package com.example.todo.repository;
 
-import com.example.todo.dto.file.FileEntity;
+import com.example.todo.dto.file.FileRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -13,15 +13,15 @@ public class FileRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void save(FileEntity file) {
+    public void save(FileRequest file) {
         String sql = "INSERT INTO post_files (post_id, origin_name, stored_name, file_path, file_size) VALUES (?, ?, ?, ?, ?)";
 
         jdbcTemplate.update(sql,
-                file.getPostId(),
-                file.getOriginName(),
-                file.getStoredName(),
-                file.getFilePath(),
-                file.getFileSize()
+                file.postId(),
+                file.originName(),
+                file.storedName(),
+                file.filePath(),
+                file.fileSize()
         );
     }
 }
